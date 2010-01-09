@@ -1,5 +1,7 @@
 package jgroupsmpi;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import org.jgroups.Address;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
@@ -11,8 +13,15 @@ import org.jgroups.View;
  */
 public class CommunicatorReceiver implements Receiver {
 
+    private final BlockingQueue buffer = new LinkedBlockingDeque();
+
     public void receive(Message msg) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Object data = msg.getObject();
+        buffer.offer(data);
+    }
+
+    public Object getData() throws InterruptedException {
+        return buffer.take();
     }
 
     public byte[] getState() {
