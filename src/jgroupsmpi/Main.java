@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) throws ChannelException, InterruptedException {
         Communicator com = new Communicator(3, "MPIJgroupsTest");
         com.start();
+        System.out.println("My rank: " + com.nRank() );
         Thread.sleep(2000);
         com.stop();
     }

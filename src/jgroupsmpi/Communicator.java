@@ -1,5 +1,6 @@
 package jgroupsmpi;
 
+import org.jgroups.Address;
 import org.jgroups.Channel;
 import org.jgroups.ChannelException;
 import org.jgroups.JChannel;
@@ -11,9 +12,13 @@ import org.jgroups.JChannel;
  * @author falcone
  */
 public class Communicator {
+
+    private final static int UNDEFINED = -1;
+
     private final Channel channel;
     private final int nProc;
     private final String clusterName;
+    private int nRank = -UNDEFINED;
 
     public Communicator(int nProc, String clusterName) throws ChannelException {
         this.nProc = nProc;
@@ -27,8 +32,23 @@ public class Communicator {
         while( channel.getView().getMembers().size() < nProc ) {
             Thread.sleep(1000);
             System.out.println("Waiting for everybody to connect...");
+
         }
-        System.out.println("Everybody is here.");
+        for( int i=0; i<nProc; i++ ) {
+            Address addr = channel.getView().getMembers().get(i);
+            if( channel.getAddress().equals( addr ) ) {
+                nRank = i;
+                break;
+            }
+        }
+    }
+
+    public int nRank() {
+        return nRank;
+    }
+
+    public int nProc() {
+        return nProc;
     }
 
     public void stop() {
