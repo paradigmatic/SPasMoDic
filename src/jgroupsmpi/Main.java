@@ -1,7 +1,6 @@
 package jgroupsmpi;
 
 
-import jgroupsmpi.Communicator;
 import org.jgroups.ChannelException;
 
 
@@ -13,6 +12,8 @@ public class Main {
     public static void main(String[] args) throws ChannelException, InterruptedException {
         Communicator com = new Communicator(3, "MPIJgroupsTest");
         com.start();
+        Thread.sleep(2000);
+        com.stop();
     }
 
 }
