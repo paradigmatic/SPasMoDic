@@ -1,6 +1,6 @@
-package jgroupsmpi;
+package spasmodic;
 
-import static jgroupsmpi.Constants.*;
+import static spasmodic.Constants.*;
 
 public class Main {
 
@@ -13,12 +13,12 @@ public class Main {
         System.out.println("My rank: " + com.nRank());
         if (com.nRank() == 0) {
             for (int i = 0; i < 10; i++) {
-                com.send(String.class, "Machin" + i, 2, 0);
+                com.send("Machin" + i, 2, 0);
                 Thread.sleep(500);
             }
         } else if (com.nRank() == 1) {
             for (int i = 0; i < 10; i++) {
-                com.send(int[].class, new int[]{i}, 2, 0);//FIXME: only 0 are received...
+                com.send(i, 2, 0);
                 Thread.sleep(500);
             }
         } else {
@@ -27,8 +27,8 @@ public class Main {
                 System.out.println("Received: " + msg);
             }
             for (int i = 0; i < 10; i++) {
-                int[] msg = (int[]) com.receive(int[].class, 1, 0);
-                System.out.println("Received: " + msg[0]);
+                int msg = (Integer) com.receive( Integer.class, 1, 0);
+                System.out.println("Received: " + msg);
             }
         }
         Thread.sleep(1000);

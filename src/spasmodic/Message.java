@@ -1,4 +1,4 @@
-package jgroupsmpi;
+package spasmodic;
 
 import java.io.Serializable;
 

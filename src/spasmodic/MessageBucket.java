@@ -1,4 +1,4 @@
-package jgroupsmpi;
+package spasmodic;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static jgroupsmpi.Constants.*;
+import static spasmodic.Constants.*;
 
 /**
  *
@@ -44,6 +44,7 @@ public class MessageBucket {
                     boolean sourceOK = template.source == ANY_SOURCE || msg.source == template.source;
                     boolean tagOK = template.tag == ANY_SOURCE || msg.tag == template.tag;
                     if( typeOK && sourceOK && tagOK ) {
+                        bucket.remove(msg);
                         return msg;
                     }
                 }
@@ -52,5 +53,9 @@ public class MessageBucket {
         } finally {
             lock.unlock();
         }
+    }
+
+    public int size() {
+        return bucket.size();
     }
 }

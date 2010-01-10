@@ -1,4 +1,4 @@
-package jgroupsmpi;
+package spasmodic;
 
 import org.jgroups.Address;
 import org.jgroups.Receiver;
@@ -14,7 +14,8 @@ public class CommunicatorReceiver implements Receiver {
 
     public void receive(org.jgroups.Message msg) {
         Object data = msg.getObject();
-        bucket.add( (Message<?>) data );
+        Message<?> m = (Message<?>) data;
+        bucket.add( m );
     }
 
     public Object getData( Message<?> template ) throws InterruptedException {
