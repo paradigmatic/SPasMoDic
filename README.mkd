@@ -1,0 +1,29 @@
+Description
+===========
+
+_SPasMoDic_ is an experimental lightweight SPMD library based on
+JGroups. The goal is to provide an user friendly MPI for java
+applications.
+
+
+License and ownership
+---------------------
+
+_SPasMoDic_ is an free open source library released under GNU GPLv3 license
+(see the LICENSE file included in the bundle).
+
+Copyright Paradigmatic, 2010. All rights reserved.
+
+
+Requirements
+------------
+
+ * Java platform JDK (tested and developed with 1.6 but 1.5 should also work).
+ * JGroups (tested and developed with 2.8).
+
+Examples
+--------
+
+Have a look in 'spasmodic.examples' packages for other examples.
+
+
