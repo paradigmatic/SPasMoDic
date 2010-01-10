@@ -1,4 +1,24 @@
-package spasmodic;
+/*
+ * This file is part of SPasMoDic
+ *
+ *  SPasMoDic is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  SPasMoDic is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  (c) 2009, paradigmatic, paradigmatic@streum.org
+ *
+ */
+
+package spasmodic.com;
 
 import java.io.Serializable;
 import java.util.Vector;
@@ -9,7 +29,9 @@ import org.jgroups.ChannelException;
 import org.jgroups.ChannelNotConnectedException;
 import org.jgroups.JChannel;
 
-import static spasmodic.Message.Kind.*;
+import spasmodic.Status;
+import spasmodic.msg.Message;
+import static spasmodic.msg.Message.Kind.*;
 
 
 
@@ -28,14 +50,20 @@ public class Communicator {
     private int myRank = -UNDEFINED;
     private Vector<Address> procs;
 
-    public Communicator(int nProc, String clusterName) throws ChannelException {
+    public static Communicator init( int nProc, String clusterName ) throws ChannelException, InterruptedException {
+        Communicator comm = new Communicator(nProc, clusterName);
+        comm.start();
+        return comm;
+    }
+
+    private Communicator(int nProc, String clusterName) throws ChannelException {
         this.nProc = nProc;
         this.clusterName = clusterName;
         channel = new JChannel();
         receiver = new CommunicatorReceiver();
     }
 
-    public void start() throws ChannelException, InterruptedException {
+    private void start() throws ChannelException, InterruptedException {
         channel.connect(clusterName);
         channel.setReceiver( receiver );
         while( channel.getView().getMembers().size() < nProc ) {
@@ -60,7 +88,7 @@ public class Communicator {
         return nProc;
     }
 
-    public void stop() throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+    public void shutdown() throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
         channel.send( new org.jgroups.Message( null, null, Message.shutdown(myRank) ) );
         for( int i=0; i<nProc; i++ ) {
             receiver.getShutdownMessage();
