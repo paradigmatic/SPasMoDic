@@ -8,7 +8,6 @@ import org.jgroups.ChannelClosedException;
 import org.jgroups.ChannelException;
 import org.jgroups.ChannelNotConnectedException;
 import org.jgroups.JChannel;
-import org.jgroups.Message;
 
 
 
@@ -64,23 +63,15 @@ public class Communicator {
         channel.close();
     }
 
-    public void send( Serializable s, int rank ) throws ChannelNotConnectedException, ChannelClosedException {
-        channel.send( new Message(procs.get( rank), null, s) );
+    public void send( Serializable s, int dest, int tag ) throws ChannelNotConnectedException, ChannelClosedException {
+        Message msg = new Message(nRank, tag, s);
+        channel.send( new org.jgroups.Message(procs.get( dest ), null, msg) );
     }
 
-    public Object receive() throws InterruptedException {
-       return receiver.getData();
+    public Object receive( int source, int tag ) throws InterruptedException {
+        Message template = new Message( source, tag, null );
+        return receiver.getData(template);
     }
-
-    /*public Object broadcast( Serializable s, int root ) throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
-        Object result = s;
-        if( nRank  == root ) {
-           channel.send( new Message(null, null, s) );
-        } else {
-            result = receiver.getData();
-        }
-        return s;
-    }*/
 
     
 }

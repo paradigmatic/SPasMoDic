@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @author falcone
  */
-public class Message<T extends Serializable> {
+public class Message<T extends Serializable> implements Serializable {
 
     public final int source;
     public final int tag;
@@ -17,7 +17,4 @@ public class Message<T extends Serializable> {
         this.tag = tag;
         this.content = content;
     }
-
-
-
 }

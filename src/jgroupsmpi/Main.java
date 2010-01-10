@@ -1,5 +1,7 @@
 package jgroupsmpi;
 
+import static jgroupsmpi.Constants.*;
+
 
 
 public class Main {
@@ -12,18 +14,25 @@ public class Main {
         com.start();
         System.out.println("My rank: " + com.nRank() );
         if( com.nRank() == 0 )  {
-            com.send( "Machin", 1 );
+            for( int i=0; i<10; i++ ) {
+              com.send( "Machin"+i, 2, 0 );
+              Thread.sleep(500);
+            }
+        } else if( com.nRank() == 1 ) {
+            for( int i=0; i<10; i++ ) {
+              com.send( "Truc"+i, 2, 0 );
+              Thread.sleep(500);
+            }
+        } else {
+            for( int i=0; i<10; i++ ) {
+                String msg = (String) com.receive( 0, 0 );
+                System.out.println("Received: " + msg);
+            }
+            for( int i=0; i<10; i++ ) {
+                String msg = (String) com.receive( 1, 0 );
+                System.out.println("Received: " + msg);
+            }
         }
-        if( com.nRank() == 1 ) {
-            String msg = (String) com.receive();
-            System.out.println("Received: " + msg);
-        }
-        /*String msg2 = null;
-        if( com.nRank() == 2 ) {
-            msg2 = "truc chose";
-        }
-        msg2 = (String) com.broadcast(msg2, 2);
-        System.out.println("Received by broadcast: " + msg2);*/
         Thread.sleep(1000);
         com.stop();
     }

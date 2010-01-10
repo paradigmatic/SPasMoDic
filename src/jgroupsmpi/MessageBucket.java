@@ -1,6 +1,6 @@
 package jgroupsmpi;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -20,7 +20,7 @@ public class MessageBucket {
     private final Condition newMessage;
 
     public MessageBucket() {
-        bucket = new ArrayList<Message<?>>();
+        bucket = new LinkedList<Message<?>>();
         lock = new ReentrantLock();
         newMessage = lock.newCondition();
     }

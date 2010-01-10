@@ -1,9 +1,6 @@
 package jgroupsmpi;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import org.jgroups.Address;
-import org.jgroups.Message;
 import org.jgroups.Receiver;
 import org.jgroups.View;
 
@@ -13,15 +10,15 @@ import org.jgroups.View;
  */
 public class CommunicatorReceiver implements Receiver {
 
-    private final BlockingQueue buffer = new LinkedBlockingDeque();
+    private final MessageBucket bucket = new MessageBucket();
 
-    public void receive(Message msg) {
+    public void receive(org.jgroups.Message msg) {
         Object data = msg.getObject();
-        buffer.offer(data);
+        bucket.add( (Message<?>) data );
     }
 
-    public Object getData() throws InterruptedException {
-        return buffer.take();
+    public Object getData( Message<?> template ) throws InterruptedException {
+        return bucket.take( template ).content;
     }
 
     public byte[] getState() {
