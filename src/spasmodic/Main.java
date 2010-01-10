@@ -22,13 +22,12 @@ public class Main {
                 Thread.sleep(500);
             }
         } else {
+            Status status = new Status();
             for (int i = 0; i < 10; i++) {
-                String msg = (String) com.receive(String.class, 0, 0);
-                System.out.println("Received: " + msg);
-            }
-            for (int i = 0; i < 10; i++) {
-                int msg = (Integer) com.receive( Integer.class, 1, 0);
-                System.out.println("Received: " + msg);
+                String msg = com.receive(String.class, ANY_SOURCE, 0, status);
+                System.out.println("Received: " + msg + " from node: " + status.source);
+                int msg2 = com.receive( Integer.class, ANY_SOURCE, 0, status);
+                System.out.println("Received: " + msg2 + " from node: " + status.source);
             }
         }
         Thread.sleep(1000);

@@ -68,9 +68,17 @@ public class Communicator {
         channel.send( new org.jgroups.Message(procs.get( dest ), null, msg) );
     }
 
-    public Object receive( Class type, int source, int tag ) throws InterruptedException {
+    public <T> T receive( Class<T> type, int source, int tag ) throws InterruptedException {
         Message template = new Message( type, source, tag, null );
-        return receiver.getData(template);
+        return type.cast( receiver.getData(template).content );
+    }
+
+    public <T> T receive( Class<T> type, int source, int tag, Status status ) throws InterruptedException {
+        Message template = new Message( type, source, tag, null );
+        Message received = receiver.getData(template);
+        status.source = received.source;
+        status.tag = received.tag;
+        return type.cast( received.content );
     }
 
     

@@ -18,8 +18,8 @@ public class CommunicatorReceiver implements Receiver {
         bucket.add( m );
     }
 
-    public Object getData( Message<?> template ) throws InterruptedException {
-        return bucket.take( template ).content;
+    public Message<?> getData( Message<?> template ) throws InterruptedException {
+        return bucket.take( template );
     }
 
     public byte[] getState() {

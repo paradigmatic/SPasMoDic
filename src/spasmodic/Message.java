@@ -19,4 +19,5 @@ public class Message<T extends Serializable> implements Serializable {
         this.content = content;
         this.type = type;
     }
+
 }
