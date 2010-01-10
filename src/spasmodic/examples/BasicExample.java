@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  (c) 2009, paradigmatic, paradigmatic@streum.org
+ *  (c) 2009-2010, paradigmatic, paradigmatic@streum.org
  *
  */
 

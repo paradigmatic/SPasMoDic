@@ -1,0 +1,9 @@
+Features
+========
+
+* Automatic generation of non-colliding cluster names.
+* Better Exception management
+* Early disconnections
+* Scatter/Gather
+* Reduction
+* Distributed IO

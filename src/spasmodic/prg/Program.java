@@ -14,15 +14,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  (c) 2009, paradigmatic, paradigmatic@streum.org
+ *  (c) 2009-2010, paradigmatic, paradigmatic@streum.org
  *
  */
 
-package spasmodic;
+package spasmodic.prg;
 
-public class Constants {
+import spasmodic.com.Communicator;
 
-  public static final int ANY_SOURCE = -1;
-  public static final int ANY_TAG = -1;
+public interface Program {
+
+    public void execute( Communicator com ) throws Exception;
 
 }

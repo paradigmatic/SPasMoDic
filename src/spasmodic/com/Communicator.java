@@ -31,6 +31,7 @@ import org.jgroups.JChannel;
 
 import spasmodic.Status;
 import spasmodic.msg.Message;
+import spasmodic.prg.Program;
 import static spasmodic.msg.Message.Kind.*;
 
 
@@ -125,6 +126,10 @@ public class Communicator {
             return (T) receiver.getData(template).content;
         }
 
+    }
+
+    public void execute(Program prg) throws Exception {
+        prg.execute(this);
     }
 
     
