@@ -12,7 +12,6 @@ import static jgroupsmpi.Constants.*;
  *
  * @author falcone
  */
-//TODO: Concurrency
 public class MessageBucket {
 
     private final List<Message<?>> bucket;
@@ -41,9 +40,10 @@ public class MessageBucket {
             lock.lock();
             while( true ) {
                 for( Message<?> msg: bucket ) {
+                    boolean typeOK = template.type.equals( msg.type );
                     boolean sourceOK = template.source == ANY_SOURCE || msg.source == template.source;
                     boolean tagOK = template.tag == ANY_SOURCE || msg.tag == template.tag;
-                    if( sourceOK && tagOK ) {
+                    if( typeOK && sourceOK && tagOK ) {
                         return msg;
                     }
                 }

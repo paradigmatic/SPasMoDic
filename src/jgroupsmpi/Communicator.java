@@ -63,13 +63,13 @@ public class Communicator {
         channel.close();
     }
 
-    public void send( Serializable s, int dest, int tag ) throws ChannelNotConnectedException, ChannelClosedException {
-        Message msg = new Message(nRank, tag, s);
+    public void send( Class type, Serializable s, int dest, int tag ) throws ChannelNotConnectedException, ChannelClosedException {
+        Message msg = new Message(type, nRank, tag, s);
         channel.send( new org.jgroups.Message(procs.get( dest ), null, msg) );
     }
 
-    public Object receive( int source, int tag ) throws InterruptedException {
-        Message template = new Message( source, tag, null );
+    public Object receive( Class type, int source, int tag ) throws InterruptedException {
+        Message template = new Message( type, source, tag, null );
         return receiver.getData(template);
     }
 
