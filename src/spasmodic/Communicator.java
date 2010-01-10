@@ -25,7 +25,7 @@ public class Communicator {
     private final CommunicatorReceiver receiver;
     private final int nProc;
     private final String clusterName;
-    private int nRank = -UNDEFINED;
+    private int myRank = -UNDEFINED;
     private Vector<Address> procs;
 
     public Communicator(int nProc, String clusterName) throws ChannelException {
@@ -46,14 +46,14 @@ public class Communicator {
         procs = channel.getView().getMembers();
         for( int i=0; i<nProc; i++ ) {
             if( channel.getAddress().equals( procs.get(i) ) ) {
-                nRank = i;
+                myRank = i;
                 break;
             }
         }
     }
 
-    public int nRank() {
-        return nRank;
+    public int myRank() {
+        return myRank;
     }
 
     public int nProc() {
@@ -61,7 +61,7 @@ public class Communicator {
     }
 
     public void stop() throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
-        channel.send( new org.jgroups.Message( null, null, Message.shutdown(nRank) ) );
+        channel.send( new org.jgroups.Message( null, null, Message.shutdown(myRank) ) );
         for( int i=0; i<nProc; i++ ) {
             receiver.getShutdownMessage();
         }
@@ -70,7 +70,7 @@ public class Communicator {
     }
 
     public void send( Serializable s, int dest, int tag ) throws ChannelNotConnectedException, ChannelClosedException {
-        Message msg = new Message( POINT2POINT, s.getClass(), nRank, tag, s);
+        Message msg = new Message( POINT2POINT, s.getClass(), myRank, tag, s);
         channel.send( new org.jgroups.Message(procs.get( dest ), null, msg) );
     }
 
@@ -85,6 +85,18 @@ public class Communicator {
         status.source = received.source;
         status.tag = received.tag;
         return type.cast( received.content );
+    }
+
+    public <T extends Serializable> T broadcast( T s,  Class<T> type, int root, int tag ) throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+        if (myRank == root) {
+            Message msg = new Message( BROADCAST, type, myRank, tag, s);
+            channel.send( new org.jgroups.Message( null, null, msg) );
+            return s;
+        } else {
+            Message template = new Message( BROADCAST, type, root, tag, null );
+            return (T) receiver.getData(template).content;
+        }
+
     }
 
     

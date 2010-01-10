@@ -10,7 +10,8 @@ public class Message<T extends Serializable> implements Serializable {
 
     enum Kind {
         POINT2POINT,
-        SHUTDOWN;
+        SHUTDOWN,
+        BROADCAST;
     }
 
 
