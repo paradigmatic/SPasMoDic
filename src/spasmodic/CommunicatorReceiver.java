@@ -1,8 +1,15 @@
 package spasmodic;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import org.jgroups.Address;
 import org.jgroups.Receiver;
 import org.jgroups.View;
+
+import static spasmodic.Message.Kind.*;
 
 /**
  *
@@ -11,15 +18,24 @@ import org.jgroups.View;
 public class CommunicatorReceiver implements Receiver {
 
     private final MessageBucket bucket = new MessageBucket();
+    private final BlockingQueue<Message<?>> shutdownQueue = new LinkedBlockingQueue<Message<?>>();
 
     public void receive(org.jgroups.Message msg) {
         Object data = msg.getObject();
         Message<?> m = (Message<?>) data;
-        bucket.add( m );
+        if ( m.kind == SHUTDOWN ) {
+            shutdownQueue.add(m);
+        } else {
+            bucket.add( m );
+        }
     }
 
     public Message<?> getData( Message<?> template ) throws InterruptedException {
         return bucket.take( template );
+    }
+
+    public Message<?> getShutdownMessage() throws InterruptedException {
+        return shutdownQueue.take();
     }
 
     public byte[] getState() {

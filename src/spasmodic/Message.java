@@ -8,16 +8,31 @@ import java.io.Serializable;
  */
 public class Message<T extends Serializable> implements Serializable {
 
+    enum Kind {
+        POINT2POINT,
+        SHUTDOWN;
+    }
+
+
+
+    public final Kind kind;
     public final int source;
     public final int tag;
     public final T content;
     public final Class<T> type;
 
-    public Message(Class<T> type, int source, int tag, T content) {
+    public Message(Kind kind,  Class<T> type, int source, int tag, T content) {
+        this.kind = kind;
         this.source = source;
         this.tag = tag;
         this.content = content;
         this.type = type;
     }
+
+    public static Message<?> shutdown( int source ) {
+        return new Message<Serializable>( Kind.SHUTDOWN, Serializable.class, source, Constants.ANY_TAG, null );
+    }
+
+
 
 }

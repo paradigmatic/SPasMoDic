@@ -9,6 +9,8 @@ import org.jgroups.ChannelException;
 import org.jgroups.ChannelNotConnectedException;
 import org.jgroups.JChannel;
 
+import static spasmodic.Message.Kind.*;
+
 
 
 /**
@@ -58,23 +60,27 @@ public class Communicator {
         return nProc;
     }
 
-    public void stop() {
+    public void stop() throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+        channel.send( new org.jgroups.Message( null, null, Message.shutdown(nRank) ) );
+        for( int i=0; i<nProc; i++ ) {
+            receiver.getShutdownMessage();
+        }
         channel.disconnect();
         channel.close();
     }
 
     public void send( Serializable s, int dest, int tag ) throws ChannelNotConnectedException, ChannelClosedException {
-        Message msg = new Message( s.getClass(), nRank, tag, s);
+        Message msg = new Message( POINT2POINT, s.getClass(), nRank, tag, s);
         channel.send( new org.jgroups.Message(procs.get( dest ), null, msg) );
     }
 
     public <T> T receive( Class<T> type, int source, int tag ) throws InterruptedException {
-        Message template = new Message( type, source, tag, null );
+        Message template = new Message( POINT2POINT, type, source, tag, null );
         return type.cast( receiver.getData(template).content );
     }
 
     public <T> T receive( Class<T> type, int source, int tag, Status status ) throws InterruptedException {
-        Message template = new Message( type, source, tag, null );
+        Message template = new Message( POINT2POINT, type, source, tag, null );
         Message received = receiver.getData(template);
         status.source = received.source;
         status.tag = received.tag;

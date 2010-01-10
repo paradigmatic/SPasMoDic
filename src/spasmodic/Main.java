@@ -30,7 +30,6 @@ public class Main {
                 System.out.println("Received: " + msg2 + " from node: " + status.source);
             }
         }
-        Thread.sleep(1000);
         com.stop();
     }
 }
