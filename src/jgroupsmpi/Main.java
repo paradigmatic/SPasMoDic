@@ -1,8 +1,6 @@
 package jgroupsmpi;
 
 
-import org.jgroups.ChannelException;
-
 
 public class Main {
 
@@ -20,6 +18,12 @@ public class Main {
             String msg = (String) com.receive();
             System.out.println("Received: " + msg);
         }
+        /*String msg2 = null;
+        if( com.nRank() == 2 ) {
+            msg2 = "truc chose";
+        }
+        msg2 = (String) com.broadcast(msg2, 2);
+        System.out.println("Received by broadcast: " + msg2);*/
         Thread.sleep(1000);
         com.stop();
     }

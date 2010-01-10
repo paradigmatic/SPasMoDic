@@ -1,5 +1,6 @@
 package jgroupsmpi;
 
+import java.io.Serializable;
 import java.util.Vector;
 import org.jgroups.Address;
 import org.jgroups.Channel;
@@ -63,13 +64,23 @@ public class Communicator {
         channel.close();
     }
 
-    public void send( String s, int rank ) throws ChannelNotConnectedException, ChannelClosedException {
+    public void send( Serializable s, int rank ) throws ChannelNotConnectedException, ChannelClosedException {
         channel.send( new Message(procs.get( rank), null, s) );
     }
 
-    public Object receive() {
+    public Object receive() throws InterruptedException {
        return receiver.getData();
     }
+
+    /*public Object broadcast( Serializable s, int root ) throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+        Object result = s;
+        if( nRank  == root ) {
+           channel.send( new Message(null, null, s) );
+        } else {
+            result = receiver.getData();
+        }
+        return s;
+    }*/
 
     
 }
