@@ -31,6 +31,7 @@ import org.jgroups.JChannel;
 
 import spasmodic.Status;
 import spasmodic.msg.Message;
+import spasmodic.op.Reductor;
 import spasmodic.prg.Program;
 import static spasmodic.msg.Message.Kind.*;
 
@@ -126,6 +127,45 @@ public class Communicator {
             return (T) receiver.getData(template).content;
         }
 
+    }
+
+    public <T extends Serializable> T reduce( T s, Class<T> type, Reductor<T> reductor, int tag ) throws InterruptedException, ChannelNotConnectedException, ChannelClosedException {
+        T result = s;
+        CommunicationTree tree = new CommunicationTree(nProc);
+        T dataLeft = null;
+        T dataRight = null;
+        if( tree.leftChildOf(myRank) != CommunicationTree.EMPTY ) {
+            System.out.println("NODE "+myRank+": receiving from " + tree.leftChildOf(myRank) );
+            Message template = new Message( REDUCTION, type, tree.leftChildOf(myRank), tag, null );
+            dataLeft = (T) receiver.getData(template).content;
+        }
+        if( tree.rightChildOf(myRank) != CommunicationTree.EMPTY ) {
+            System.out.println("NODE "+myRank+": receiving from " + tree.rightChildOf(myRank) );
+            Message template = new Message( REDUCTION, type, tree.rightChildOf(myRank), tag, null );
+            dataRight = (T) receiver.getData(template).content;
+        }
+        if( dataLeft != null ) {
+            System.out.println("NODE "+myRank+": reducing data with left child" );
+            result = reductor.reduce( result, dataLeft );
+        }
+        if( dataRight != null ) {
+            System.out.println("NODE "+myRank+": reducing data with right child" );
+            result = reductor.reduce( result, dataRight );
+        }
+        System.out.println("NODE "+myRank+": result reduced." );
+        if( myRank != 0 ) {
+           System.out.println("NODE "+myRank+": sending data to parent." );
+           Message<T> msg = new Message<T>( REDUCTION, type, myRank, tag, result);
+           channel.send( new org.jgroups.Message(procs.get( tree.parentOf( myRank) ), null, msg) );
+           System.out.println("NODE "+myRank+": data sent to parent." );
+           Message template = new Message( REDUCTION, type, 0, tag, null );
+           return (T) receiver.getData(template).content;
+        } else {
+            System.out.println("NODE "+myRank+": broad casting result." );
+            Message msg = new Message( REDUCTION, type, myRank, tag, s);
+            channel.send( new org.jgroups.Message( null, null, msg) );
+            return result;
+        }
     }
 
     public void execute(Program prg) throws Exception {
