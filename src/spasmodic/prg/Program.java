@@ -20,10 +20,59 @@
 
 package spasmodic.prg;
 
+import java.io.Serializable;
+import org.jgroups.ChannelClosedException;
+import org.jgroups.ChannelNotConnectedException;
+import spasmodic.Status;
 import spasmodic.com.Communicator;
+import spasmodic.op.Reductor;
 
-public interface Program {
+public abstract class Program {
 
-    public void execute( Communicator com ) throws Exception;
+    private Communicator comm;
+
+    public final void defineCommunicator( Communicator comm ) {
+        if ( this.comm == null ) {
+            this.comm = comm;
+        } else {
+            throw new IllegalStateException("Communicator was already defined");
+        }
+    }
+
+    public abstract void execute() throws Exception;
+
+    public void shutdown() throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+        comm.shutdown();
+    }
+
+    public void send(Serializable s, int dest, int tag) throws ChannelNotConnectedException, ChannelClosedException {
+        comm.send(s, dest, tag);
+    }
+
+    public <T extends Serializable> T reduce(T s, Class<T> type, Reductor<T> reductor, int tag) throws InterruptedException, ChannelNotConnectedException, ChannelClosedException {
+        return comm.reduce(s, type, reductor, tag);
+    }
+
+    public <T> T receive(Class<T> type, int source, int tag, Status status) throws InterruptedException {
+        return comm.receive(type, source, tag, status);
+    }
+
+    public <T> T receive(Class<T> type, int source, int tag) throws InterruptedException {
+        return comm.receive(type, source, tag);
+    }
+
+    public int nProc() {
+        return comm.nProc();
+    }
+
+    public int myRank() {
+        return comm.myRank();
+    }
+
+    public <T extends Serializable> T broadcast(T s, Class<T> type, int root, int tag) throws ChannelNotConnectedException, ChannelClosedException, InterruptedException {
+        return comm.broadcast(s, type, root, tag);
+    }
+
+    
 
 }

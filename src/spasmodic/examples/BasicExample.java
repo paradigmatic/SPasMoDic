@@ -20,14 +20,14 @@
 
 package spasmodic.examples;
 
-import spasmodic.com.Communicator;
+import spasmodic.com.JGroupsCommunicator;
 import spasmodic.*;
 import static spasmodic.Constants.*;
 
 public class BasicExample {
 
     public static void main(String[] args) throws Exception {
-        Communicator com = Communicator.init(3, "MPIJgroupsTest");
+        JGroupsCommunicator com = JGroupsCommunicator.init(3, "MPIJgroupsTest");
 
         System.out.println("My rank: " + com.myRank());
 

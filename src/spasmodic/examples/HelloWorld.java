@@ -21,24 +21,25 @@
 package spasmodic.examples;
 
 import spasmodic.com.Communicator;
+import spasmodic.com.JGroupsCommunicator;
 import spasmodic.prg.Program;
 
-public class HelloWorld implements Program {
+public class HelloWorld extends Program {
 
-    public void execute(Communicator com) throws Exception {
-        if ( com.nProc() != 2 ) {
+    public void execute() throws Exception {
+        if ( nProc() != 2 ) {
             throw new RuntimeException("Two nodes must connect");
         }
-        if( com.myRank() == 0 ) {
-            com.send("Hello World !", 1, 0);
+        if( myRank() == 0 ) {
+            send("Hello World !", 1, 0);
         } else {
-            String greetings = com.receive(String.class, 0, 0);
+            String greetings = receive(String.class, 0, 0);
             System.out.println("Received: " + greetings);
         }
     }
 
     public static void main(String[] args) throws Exception {
-        Communicator com = Communicator.init(2, "HelloWorldTest");
+        Communicator com = JGroupsCommunicator.init(2, "HelloWorldTest");
         com.execute( new HelloWorld() );
         com.shutdown();
     }

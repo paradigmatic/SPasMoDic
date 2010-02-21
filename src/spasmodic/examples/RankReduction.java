@@ -20,12 +20,12 @@
 
 package spasmodic.examples;
 
-import spasmodic.com.Communicator;
+import spasmodic.com.JGroupsCommunicator;
 import spasmodic.op.Reductor;
 import spasmodic.prg.Program;
 
 
-public class RankReduction implements Program {
+public class RankReduction extends Program {
     
     private final Reductor<Integer> plus = new Reductor<Integer>() {
         public Integer reduce(Integer left, Integer right) {
@@ -33,13 +33,13 @@ public class RankReduction implements Program {
         }
     };
 
-    public void execute(Communicator com) throws Exception {
-        int sum = com.reduce( com.myRank(), Integer.class, plus, 0);
+    public void execute() throws Exception {
+        int sum = reduce( myRank(), Integer.class, plus, 0);
         System.out.println("The sum is: " + sum);
     }
 
     public static void main(String[] args) throws Exception {
-        Communicator com = Communicator.init(4, "ReductionTest");
+        JGroupsCommunicator com = JGroupsCommunicator.init(4, "ReductionTest");
         com.execute( new RankReduction() );
         com.shutdown();
     }
