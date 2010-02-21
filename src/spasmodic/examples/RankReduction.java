@@ -20,6 +20,7 @@
 
 package spasmodic.examples;
 
+import spasmodic.com.Communicator;
 import spasmodic.com.JGroupsCommunicator;
 import spasmodic.op.Reductor;
 import spasmodic.prg.Program;
@@ -39,7 +40,7 @@ public class RankReduction extends Program {
     }
 
     public static void main(String[] args) throws Exception {
-        JGroupsCommunicator com = JGroupsCommunicator.init(4, "ReductionTest");
+        Communicator com = JGroupsCommunicator.init(4, "ReductionTest");
         com.execute( new RankReduction() );
         com.shutdown();
     }
